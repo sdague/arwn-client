@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import pytest
 
-from pyarwn import ArwnDevice, ArwnReading, parse_message
-from pyarwn._units import CELSIUS, DEGREE, FAHRENHEIT, INCHES, PERCENTAGE
+from arwn_client import ArwnDevice, ArwnReading, parse_message
+from arwn_client._units import CELSIUS, DEGREE, FAHRENHEIT, INCHES, PERCENTAGE
 
 # ---------------------------------------------------------------------------
 # Temperature

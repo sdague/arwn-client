@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pyarwn"
+name = "arwn-client"
 version = "0.1.0"
 description = "Python client library for parsing ARWN weather station MQTT messages"
 readme = "README.md"
@@ -26,7 +26,10 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 
-dependencies = []
+dependencies = [
+    "click>=8.0",
+    "paho-mqtt>=2.0",
+]
 
 [project.optional-dependencies]
 dev = [
@@ -39,17 +42,20 @@ test = [
     "pytest-cov>=4.0",
 ]
 
+[project.scripts]
+arwn = "arwn_client.cli:main"
+
 [project.urls]
-Homepage = "https://github.com/sdague/pyarwn"
-Repository = "https://github.com/sdague/pyarwn"
-"Bug Tracker" = "https://github.com/sdague/pyarwn/issues"
-Changelog = "https://github.com/sdague/pyarwn/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/sdague/arwn-client"
+Repository = "https://github.com/sdague/arwn-client"
+"Bug Tracker" = "https://github.com/sdague/arwn-client/issues"
+Changelog = "https://github.com/sdague/arwn-client/blob/main/CHANGELOG.md"
 
 [tool.setuptools]
-packages = ["pyarwn"]
+packages = ["arwn_client"]
 
 [tool.setuptools.package-data]
-pyarwn = ["py.typed"]
+arwn_client = ["py.typed"]
 
 [tool.ruff]
 line-length = 88
@@ -70,7 +76,7 @@ addopts = [
 ]
 
 [tool.coverage.run]
-source = ["pyarwn"]
+source = ["arwn_client"]
 branch = true
 omit = [
     "*/tests/*",

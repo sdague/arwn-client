@@ -61,7 +61,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest --cov=pyarwn --cov-report=term-missing
+          pytest --cov=arwn_client --cov-report=term-missing
 
   build:
     needs: [validate, test]
@@ -94,7 +94,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/project/pyarwn/
+      url: https://pypi.org/project/arwn-client/
     permissions:
       id-token: write
 
