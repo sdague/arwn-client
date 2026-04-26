@@ -43,7 +43,7 @@ test = [
 ]
 
 [project.scripts]
-arwn = "arwn_client.cli:main"
+arwn-client = "arwn_client.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/sdague/arwn-client"
