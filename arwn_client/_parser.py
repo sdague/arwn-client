@@ -43,6 +43,10 @@ def parse_message(topic: str, payload: dict[str, Any]) -> ArwnDevice | None:
                 sensor_name=f"{name} Temperature",
                 value=payload["temp"],
                 unit=temp_unit,
+                device_class="temperature",
+                state_class="measurement",
+                icon=None,
+                unique_id_parts=("temperature", name, "temp"),
             )
         )
         if "humid" in payload:
@@ -52,6 +56,10 @@ def parse_message(topic: str, payload: dict[str, Any]) -> ArwnDevice | None:
                     sensor_name=f"{name} Humidity",
                     value=payload["humid"],
                     unit=PERCENTAGE,
+                    device_class="humidity",
+                    state_class="measurement",
+                    icon=None,
+                    unique_id_parts=("temperature", name, "humid"),
                 )
             )
         return device
@@ -67,6 +75,10 @@ def parse_message(topic: str, payload: dict[str, Any]) -> ArwnDevice | None:
                 sensor_name=f"{name} Moisture",
                 value=payload["moisture"],
                 unit=unit,
+                device_class=None,
+                state_class="measurement",
+                icon="mdi:water-percent",
+                unique_id_parts=("moisture", name, "moisture"),
             )
         )
         return device
@@ -80,6 +92,10 @@ def parse_message(topic: str, payload: dict[str, Any]) -> ArwnDevice | None:
                     sensor_name="Rain Since Midnight",
                     value=payload["since_midnight"],
                     unit=INCHES,
+                    device_class="precipitation",
+                    state_class="measurement",
+                    icon=None,
+                    unique_id_parts=("rain", "since_midnight"),
                 )
             )
         else:
@@ -90,12 +106,21 @@ def parse_message(topic: str, payload: dict[str, Any]) -> ArwnDevice | None:
                         sensor_name="Total Rainfall",
                         value=payload["total"],
                         unit=unit,
+                        device_class="precipitation",
+                        state_class="measurement",
+                        icon=None,
+                        unique_id_parts=("rain", "total"),
+                        expose=False,
                     ),
                     ArwnReading(
                         sensor_key="rate",
                         sensor_name="Rainfall Rate",
                         value=payload["rate"],
                         unit=unit,
+                        device_class="precipitation",
+                        state_class="measurement",
+                        icon=None,
+                        unique_id_parts=("rain", "rate"),
                     ),
                 ]
             )
@@ -109,6 +134,10 @@ def parse_message(topic: str, payload: dict[str, Any]) -> ArwnDevice | None:
                 sensor_name="Barometer",
                 value=payload["pressure"],
                 unit=unit,
+                device_class=None,
+                state_class="measurement",
+                icon="mdi:thermometer-lines",
+                unique_id_parts=("barometer", "pressure"),
             )
         )
         return device
@@ -122,18 +151,30 @@ def parse_message(topic: str, payload: dict[str, Any]) -> ArwnDevice | None:
                     sensor_name="Wind Speed",
                     value=payload["speed"],
                     unit=unit,
+                    device_class="wind_speed",
+                    state_class="measurement",
+                    icon=None,
+                    unique_id_parts=("wind", "speed"),
                 ),
                 ArwnReading(
                     sensor_key="gust",
                     sensor_name="Wind Gust",
                     value=payload["gust"],
                     unit=unit,
+                    device_class="wind_speed",
+                    state_class="measurement",
+                    icon=None,
+                    unique_id_parts=("wind", "gust"),
                 ),
                 ArwnReading(
                     sensor_key="direction",
                     sensor_name="Wind Direction",
                     value=payload["direction"],
                     unit=DEGREE,
+                    device_class="wind_direction",
+                    state_class="measurement_angle",
+                    icon="mdi:compass",
+                    unique_id_parts=("wind", "direction"),
                 ),
             ]
         )
