@@ -235,3 +235,128 @@ def test_all_readings_are_arwnreading_instances(topic: str, payload: dict) -> No
     assert device is not None
     for r in device.readings:
         assert isinstance(r, ArwnReading)
+
+
+# ---------------------------------------------------------------------------
+# Metadata correctness
+# ---------------------------------------------------------------------------
+
+
+def test_temperature_metadata() -> None:
+    device = parse_message("arwn/temperature/BackYard", {"temp": 72.5, "units": "F"})
+    assert device is not None
+    r = device.readings[0]
+    assert r.device_class == "temperature"
+    assert r.state_class == "measurement"
+    assert r.icon is None
+    assert r.expose is True
+    assert r.unique_id_parts == ("temperature", "BackYard", "temp")
+
+
+def test_humidity_metadata() -> None:
+    device = parse_message(
+        "arwn/temperature/BackYard", {"temp": 72.5, "humid": 65.0, "units": "F"}
+    )
+    assert device is not None
+    humid = next(r for r in device.readings if r.sensor_key == "humid")
+    assert humid.device_class == "humidity"
+    assert humid.state_class == "measurement"
+    assert humid.icon is None
+    assert humid.expose is True
+    assert humid.unique_id_parts == ("temperature", "BackYard", "humid")
+
+
+def test_moisture_metadata() -> None:
+    device = parse_message("arwn/moisture/FrontLawn", {"moisture": 45.2, "units": "%"})
+    assert device is not None
+    r = device.readings[0]
+    assert r.device_class is None
+    assert r.state_class == "measurement"
+    assert r.icon == "mdi:water-percent"
+    assert r.expose is True
+    assert r.unique_id_parts == ("moisture", "FrontLawn", "moisture")
+
+
+def test_wind_speed_metadata() -> None:
+    device = parse_message(
+        "arwn/wind", {"speed": 12.3, "gust": 18.0, "direction": 270, "units": "mph"}
+    )
+    assert device is not None
+    speed = next(r for r in device.readings if r.sensor_key == "speed")
+    assert speed.device_class == "wind_speed"
+    assert speed.state_class == "measurement"
+    assert speed.icon is None
+    assert speed.expose is True
+    assert speed.unique_id_parts == ("wind", "speed")
+
+
+def test_wind_direction_metadata() -> None:
+    device = parse_message(
+        "arwn/wind", {"speed": 12.3, "gust": 18.0, "direction": 270, "units": "mph"}
+    )
+    assert device is not None
+    direction = next(r for r in device.readings if r.sensor_key == "direction")
+    assert direction.device_class == "wind_direction"
+    assert direction.state_class == "measurement_angle"
+    assert direction.icon == "mdi:compass"
+    assert direction.expose is True
+    assert direction.unique_id_parts == ("wind", "direction")
+
+
+def test_rain_total_not_exposed() -> None:
+    device = parse_message("arwn/rain", {"total": 1.2, "rate": 0.1, "units": "in"})
+    assert device is not None
+    total = next(r for r in device.readings if r.sensor_key == "total")
+    assert total.expose is False
+    assert total.device_class == "precipitation"
+    assert total.state_class == "measurement"
+    assert total.unique_id_parts == ("rain", "total")
+
+
+def test_rain_rate_metadata() -> None:
+    device = parse_message("arwn/rain", {"total": 1.2, "rate": 0.1, "units": "in"})
+    assert device is not None
+    rate = next(r for r in device.readings if r.sensor_key == "rate")
+    assert rate.expose is True
+    assert rate.device_class == "precipitation"
+    assert rate.state_class == "measurement"
+    assert rate.unique_id_parts == ("rain", "rate")
+
+
+def test_rain_since_midnight_metadata() -> None:
+    device = parse_message("arwn/rain/today", {"since_midnight": 0.5, "units": "in"})
+    assert device is not None
+    r = device.readings[0]
+    assert r.expose is True
+    assert r.device_class == "precipitation"
+    assert r.state_class == "measurement"
+    assert r.unique_id_parts == ("rain", "since_midnight")
+
+
+def test_barometer_metadata() -> None:
+    device = parse_message("arwn/barometer", {"pressure": 1013.25, "units": "mb"})
+    assert device is not None
+    r = device.readings[0]
+    assert r.device_class is None
+    assert r.state_class == "measurement"
+    assert r.icon == "mdi:thermometer-lines"
+    assert r.expose is True
+    assert r.unique_id_parts == ("barometer", "pressure")
+
+
+def test_all_exposed_readings_have_state_class() -> None:
+    """Every exposed reading must have a non-empty state_class."""
+    messages = [
+        ("arwn/temperature/BackYard", {"temp": 72.5, "humid": 65.0, "units": "F"}),
+        ("arwn/moisture/FrontLawn", {"moisture": 45.2, "units": "%"}),
+        ("arwn/wind", {"speed": 12.3, "gust": 18.0, "direction": 270, "units": "mph"}),
+        ("arwn/rain", {"total": 1.2, "rate": 0.1, "units": "in"}),
+        ("arwn/rain/today", {"since_midnight": 0.5, "units": "in"}),
+        ("arwn/barometer", {"pressure": 1013.25, "units": "mb"}),
+    ]
+    for topic, payload in messages:
+        device = parse_message(topic, payload)
+        assert device is not None
+        for r in device.readings:
+            if r.expose:
+                assert r.state_class, f"{r.sensor_key} missing state_class"
