@@ -13,6 +13,11 @@ class ArwnReading:
     sensor_name: str
     value: float | int
     unit: str
+    device_class: str | None
+    state_class: str
+    icon: str | None
+    unique_id_parts: tuple[str, ...]
+    expose: bool = True
 
 
 @dataclass
